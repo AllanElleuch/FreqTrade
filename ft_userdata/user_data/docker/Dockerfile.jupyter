@@ -4,7 +4,12 @@ FROM freqtradeorg/freqtrade:develop_plot
 # Pin prompt-toolkit to avoid questionary version conflict
 RUN pip install jupyterlab "prompt-toolkit<=3.0.36" jupyter-client --user --no-cache-dir
 
+USER root
+
 RUN sudo apt-get update && apt-get install -y vim
+RUN echo 'root:myrootpassword' | chpasswd
+
+USER ftuser
 
 EXPOSE 8888
 
