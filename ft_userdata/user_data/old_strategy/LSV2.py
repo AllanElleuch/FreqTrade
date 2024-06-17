@@ -10,29 +10,30 @@ from datetime import datetime, timedelta
 from freqtrade.strategy import merge_informative_pair
 import numpy as np
 from freqtrade.strategy import stoploss_from_open
+from freqtrade.strategy import DecimalParameter, IntParameter
 
-class LSv1(IStrategy):
+
+class LSv2copy(IStrategy):
+
+    INTERFACE_VERSION: int = 3
     can_short = True
-    # Enter Long hyperspace params:
-    enter_long_params = {
-        "buy_trend_above_senkou_level": 1,
-        "buy_trend_bullish_level": 6,
-        "buy_fan_magnitude_shift_value": 3,
-        "buy_min_fan_magnitude_gain": 1.002
-    }
 
+    # Define hyperparameters for optimization
+    buy_trend_above_senkou_level = IntParameter(1, 8, default=1)
+    buy_trend_bullish_level = IntParameter(1, 8, default=6)
+    buy_fan_magnitude_shift_value = IntParameter(1, 3, default=2)
+    buy_min_fan_magnitude_gain = DecimalParameter(1.000, 1.500, default=1.002)
+
+    short_trend_below_senkou_level = IntParameter(1, 8, default=1)
+    short_trend_bearish_level = IntParameter(1, 8, default=6)
+    short_fan_magnitude_shift_value = IntParameter(1, 3, default=2)
+    short_min_fan_magnitude_gain = DecimalParameter(0.950, 1.000, default=0.998)
+    
     # Exit Long hyperspace params:
     exit_long_params = {
         "exit_long_indicator": "trend_close_2h",
     }
 
-    # Enter Short hyperspace params:
-    enter_short_params = {
-        "short_trend_below_senkou_level": 1,
-        "short_trend_bearish_level": 6,
-        "short_fan_magnitude_shift_value": 3,
-        "short_min_fan_magnitude_gain": 0.998
-    }
 
     # Exit Short hyperspace params:
     exit_short_params = {
@@ -41,11 +42,11 @@ class LSv1(IStrategy):
 
     # ROI table:
     minimal_roi = {
-        "0": 0.14,
-        "20": 0.08,
-        "50": 0.04,
-        "90": 0.015,
-        "140": 0
+        "0": 0.08,
+        "10": 0.059,
+        "25": 0.02,
+        "40": 0.015,
+        "60": 0
     }
 
     # Stoploss:
@@ -57,11 +58,11 @@ class LSv1(IStrategy):
     startup_candle_count = 96
     process_only_new_candles = False
 
+    # Trailing stop:
     trailing_stop = False
-
-    use_exit_signal = True
-    exit_profit_only = False
-    ignore_roi_if_entry_signal = False
+    trailing_stop_positive = 0.05
+    trailing_stop_positive_offset = 0.1
+    trailing_only_offset_is_reached = False
 
     plot_config = {
         'main_plot': {
@@ -138,139 +139,130 @@ class LSv1(IStrategy):
         conditions_short = []
 
         # Long conditions
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 1:
+        if self.buy_trend_above_senkou_level.value >= 1:
             conditions_long.append(dataframe['trend_close_5m'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_5m'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 2:
+        if self.buy_trend_above_senkou_level.value >= 2:
             conditions_long.append(dataframe['trend_close_15m'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_15m'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 3:
+        if self.buy_trend_above_senkou_level.value >= 3:
             conditions_long.append(dataframe['trend_close_30m'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_30m'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 4:
+        if self.buy_trend_above_senkou_level.value >= 4:
             conditions_long.append(dataframe['trend_close_1h'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_1h'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 5:
+        if self.buy_trend_above_senkou_level.value >= 5:
             conditions_long.append(dataframe['trend_close_2h'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_2h'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 6:
+        if self.buy_trend_above_senkou_level.value >= 6:
             conditions_long.append(dataframe['trend_close_4h'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_4h'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 7:
+        if self.buy_trend_above_senkou_level.value >= 7:
             conditions_long.append(dataframe['trend_close_6h'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_6h'] > dataframe['senkou_b'])
 
-        if self.enter_long_params['buy_trend_above_senkou_level'] >= 8:
+        if self.buy_trend_above_senkou_level.value >= 8:
             conditions_long.append(dataframe['trend_close_8h'] > dataframe['senkou_a'])
             conditions_long.append(dataframe['trend_close_8h'] > dataframe['senkou_b'])
 
         # Trends bullish
-        if self.enter_long_params['buy_trend_bullish_level'] >= 1:
+        if self.buy_trend_bullish_level.value >= 1:
             conditions_long.append(dataframe['trend_close_5m'] > dataframe['trend_open_5m'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 2:
+        if self.buy_trend_bullish_level.value >= 2:
             conditions_long.append(dataframe['trend_close_15m'] > dataframe['trend_open_15m'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 3:
+        if self.buy_trend_bullish_level.value >= 3:
             conditions_long.append(dataframe['trend_close_30m'] > dataframe['trend_open_30m'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 4:
+        if self.buy_trend_bullish_level.value >= 4:
             conditions_long.append(dataframe['trend_close_1h'] > dataframe['trend_open_1h'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 5:
+        if self.buy_trend_bullish_level.value >= 5:
             conditions_long.append(dataframe['trend_close_2h'] > dataframe['trend_open_2h'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 6:
+        if self.buy_trend_bullish_level.value >= 6:
             conditions_long.append(dataframe['trend_close_4h'] > dataframe['trend_open_4h'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 7:
+        if self.buy_trend_bullish_level.value >= 7:
             conditions_long.append(dataframe['trend_close_6h'] > dataframe['trend_open_6h'])
 
-        if self.enter_long_params['buy_trend_bullish_level'] >= 8:
+        if self.buy_trend_bullish_level.value >= 8:
             conditions_long.append(dataframe['trend_close_8h'] > dataframe['trend_open_8h'])
 
         # Trends magnitude
         conditions_long.append(dataframe['fan_magnitude'] > 1)
-        for x in range(self.enter_long_params['buy_fan_magnitude_shift_value']):
+        for x in range(self.buy_fan_magnitude_shift_value.value):
             conditions_long.append(dataframe['fan_magnitude'].shift(x+1) < dataframe['fan_magnitude'])
 
         # Short conditions
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 1:
+        if self.short_trend_below_senkou_level.value >= 1:
             conditions_short.append(dataframe['trend_close_5m'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_5m'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 2:
+        if self.short_trend_below_senkou_level.value >= 2:
             conditions_short.append(dataframe['trend_close_15m'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_15m'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 3:
+        if self.short_trend_below_senkou_level.value >= 3:
             conditions_short.append(dataframe['trend_close_30m'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_30m'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 4:
+        if self.short_trend_below_senkou_level.value >= 4:
             conditions_short.append(dataframe['trend_close_1h'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_1h'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 5:
+        if self.short_trend_below_senkou_level.value >= 5:
             conditions_short.append(dataframe['trend_close_2h'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_2h'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 6:
+        if self.short_trend_below_senkou_level.value >= 6:
             conditions_short.append(dataframe['trend_close_4h'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_4h'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 7:
+        if self.short_trend_below_senkou_level.value >= 7:
             conditions_short.append(dataframe['trend_close_6h'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_6h'] < dataframe['senkou_b'])
 
-        if self.enter_short_params['short_trend_below_senkou_level'] >= 8:
+        if self.short_trend_below_senkou_level.value >= 8:
             conditions_short.append(dataframe['trend_close_8h'] < dataframe['senkou_a'])
             conditions_short.append(dataframe['trend_close_8h'] < dataframe['senkou_b'])
 
         # Trends bearish
-        if self.enter_short_params['short_trend_bearish_level'] >= 1:
+        if self.short_trend_bearish_level.value >= 1:
             conditions_short.append(dataframe['trend_close_5m'] < dataframe['trend_open_5m'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 2:
+        if self.short_trend_bearish_level.value >= 2:
             conditions_short.append(dataframe['trend_close_15m'] < dataframe['trend_open_15m'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 3:
+        if self.short_trend_bearish_level.value >= 3:
             conditions_short.append(dataframe['trend_close_30m'] < dataframe['trend_open_30m'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 4:
+        if self.short_trend_bearish_level.value >= 4:
             conditions_short.append(dataframe['trend_close_1h'] < dataframe['trend_open_1h'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 5:
+        if self.short_trend_bearish_level.value >= 5:
             conditions_short.append(dataframe['trend_close_2h'] < dataframe['trend_open_2h'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 6:
+        if self.short_trend_bearish_level.value >= 6:
             conditions_short.append(dataframe['trend_close_4h'] < dataframe['trend_open_4h'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 7:
+        if self.short_trend_bearish_level.value >= 7:
             conditions_short.append(dataframe['trend_close_6h'] < dataframe['trend_open_6h'])
 
-        if self.enter_short_params['short_trend_bearish_level'] >= 8:
+        if self.short_trend_bearish_level.value >= 8:
             conditions_short.append(dataframe['trend_close_8h'] < dataframe['trend_open_8h'])
 
         # Trends magnitude
         conditions_short.append(dataframe['fan_magnitude'] < 1)
-        for x in range(self.enter_short_params['short_fan_magnitude_shift_value']):
+        for x in range(self.short_fan_magnitude_shift_value.value):
             conditions_short.append(dataframe['fan_magnitude'].shift(x+1) > dataframe['fan_magnitude'])
-
-        # Check for last position outcomes
-        # pair = metadata['pair']
-        # if pair in self.last_positions:
-         #    last_position = self.last_positions[pair]
-          #   if last_position['type'] == 'long' and last_position['profit'] > 0:
-           #      conditions_long.append(dataframe['enter_long'] != 1)  # Avoid long after profitable long
-            # if last_position['type'] == 'short' and last_position['profit'] > 0:
-              #   conditions_short.append(dataframe['enter_short'] != 1)  # Avoid short after profitable short
 
         if conditions_long:
             dataframe.loc[
@@ -305,11 +297,3 @@ class LSv1(IStrategy):
                 'exit_short'] = 1
 
         return dataframe
-
-#     def confirm_trade_exit(self, pair: str, trade: 'Trade', order_type: str, amount: float, rate: float,
-  #                          time_in_force: str, custom_data: dict) -> bool:
-    #     self.last_positions[pair] = {
-      #       'type': 'short' if trade.is_short else 'long',
-        #     'profit': trade.calc_profit_ratio(rate)
-        # }
-        # return True  # Allow the trade exit

@@ -1,0 +1,33 @@
+{
+  "strategy_name": "LSv2copy",
+  "params": {
+    "buy": {
+      "buy_fan_magnitude_shift_value": 1,
+      "buy_min_fan_magnitude_gain": 1.062,
+      "buy_trend_above_senkou_level": 1,
+      "buy_trend_bullish_level": 1
+    },
+    "sell": {},
+    "protection": {},
+    "roi": {
+      "0": 0.33499999999999996,
+      "78": 0.127,
+      "176": 0.036,
+      "535": 0
+    },
+    "stoploss": {
+      "stoploss": -0.08
+    },
+    "trailing": {
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.062,
+      "trailing_stop_positive_offset": 0.11699999999999999,
+      "trailing_only_offset_is_reached": false
+    },
+    "max_open_trades": {
+      "max_open_trades": 8
+    }
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2024-06-17 08:56:25.822396+00:00"
+}

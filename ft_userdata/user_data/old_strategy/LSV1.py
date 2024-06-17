@@ -15,44 +15,44 @@ class LSv1(IStrategy):
     can_short = True
     # Enter Long hyperspace params:
     enter_long_params = {
-        "buy_trend_above_senkou_level": 1,
-        "buy_trend_bullish_level": 6,
-        "buy_fan_magnitude_shift_value": 3,
-        "buy_min_fan_magnitude_gain": 1.002
+        "buy_trend_above_senkou_level": 2,
+        "buy_trend_bullish_level": 2,
+        "buy_fan_magnitude_shift_value": 1,
+        "buy_min_fan_magnitude_gain": 1.0005
     }
 
     # Exit Long hyperspace params:
     exit_long_params = {
-        "exit_long_indicator": "trend_close_2h",
+        "exit_long_indicator": "trend_close_30m",
     }
 
     # Enter Short hyperspace params:
     enter_short_params = {
-        "short_trend_below_senkou_level": 1,
-        "short_trend_bearish_level": 6,
-        "short_fan_magnitude_shift_value": 3,
-        "short_min_fan_magnitude_gain": 0.998
+        "short_trend_below_senkou_level": 2,
+        "short_trend_bearish_level": 2,
+        "short_fan_magnitude_shift_value": 1,
+        "short_min_fan_magnitude_gain": 0.9995
     }
 
     # Exit Short hyperspace params:
     exit_short_params = {
-        "exit_short_indicator": "trend_close_2h",
+        "exit_short_indicator": "trend_close_30m",
     }
 
     # ROI table:
     minimal_roi = {
-        "0": 0.14,
-        "20": 0.08,
-        "50": 0.04,
-        "90": 0.015,
-        "140": 0
+        "0": 0.01,
+        "10": 0.059,
+        "25": 0.02,
+        "40": 0.015,
+        "60": 0
     }
 
     # Stoploss:
     stoploss = -0.275
 
     # Optimal timeframe for the strategy
-    timeframe = '15m'
+    timeframe = '5m'
 
     startup_candle_count = 96
     process_only_new_candles = False
@@ -91,6 +91,9 @@ class LSv1(IStrategy):
         }
     }
 
+    # Initialize dictionary to track last positions
+    last_positions = {}
+
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         heikinashi = qtpylib.heikinashi(dataframe)
         dataframe['open'] = heikinashi['open']
@@ -115,7 +118,7 @@ class LSv1(IStrategy):
         dataframe['trend_open_6h'] = ta.EMA(dataframe['open'], timeperiod=72)
         dataframe['trend_open_8h'] = ta.EMA(dataframe['open'], timeperiod=96)
 
-        dataframe['fan_magnitude'] = (dataframe['trend_close_2h'] / dataframe['trend_close_8h'])
+        dataframe['fan_magnitude'] = (dataframe['trend_close_30m'] / dataframe['trend_close_4h'])
         dataframe['fan_magnitude_gain'] = dataframe['fan_magnitude'] / dataframe['fan_magnitude'].shift(1)
 
         ichimoku = ftt.ichimoku(dataframe, conversion_line_period=20, base_line_periods=60, laggin_span=120, displacement=30)
@@ -172,7 +175,7 @@ class LSv1(IStrategy):
 
         # Trends bullish
         if self.enter_long_params['buy_trend_bullish_level'] >= 1:
-            conditions_long.append(dataframe['trend_close_5m'] > dataframe['trend_open_5m'])
+            conditions_long.append(dataframe['trend_close_5m'] > dataframe['trend_open_15m'])
 
         if self.enter_long_params['buy_trend_bullish_level'] >= 2:
             conditions_long.append(dataframe['trend_close_15m'] > dataframe['trend_open_15m'])
@@ -235,7 +238,7 @@ class LSv1(IStrategy):
 
         # Trends bearish
         if self.enter_short_params['short_trend_bearish_level'] >= 1:
-            conditions_short.append(dataframe['trend_close_5m'] < dataframe['trend_open_5m'])
+            conditions_short.append(dataframe['trend_close_5m'] < dataframe['trend_open_15m'])
 
         if self.enter_short_params['short_trend_bearish_level'] >= 2:
             conditions_short.append(dataframe['trend_close_15m'] < dataframe['trend_open_15m'])
@@ -264,13 +267,13 @@ class LSv1(IStrategy):
             conditions_short.append(dataframe['fan_magnitude'].shift(x+1) > dataframe['fan_magnitude'])
 
         # Check for last position outcomes
-        # pair = metadata['pair']
-        # if pair in self.last_positions:
-         #    last_position = self.last_positions[pair]
-          #   if last_position['type'] == 'long' and last_position['profit'] > 0:
-           #      conditions_long.append(dataframe['enter_long'] != 1)  # Avoid long after profitable long
-            # if last_position['type'] == 'short' and last_position['profit'] > 0:
-              #   conditions_short.append(dataframe['enter_short'] != 1)  # Avoid short after profitable short
+        pair = metadata['pair']
+        if pair in self.last_positions:
+            last_position = self.last_positions[pair]
+            if last_position['type'] == 'long' and last_position['profit'] > 0:
+                conditions_long.append(dataframe['enter_long'] != 1)  # Avoid long after profitable long
+            if last_position['type'] == 'short' and last_position['profit'] > 0:
+                conditions_short.append(dataframe['enter_short'] != 1)  # Avoid short after profitable short
 
         if conditions_long:
             dataframe.loc[
@@ -289,10 +292,10 @@ class LSv1(IStrategy):
         conditions_short = []
 
         # Exit long conditions
-        conditions_long.append(qtpylib.crossed_below(dataframe['trend_close_5m'], dataframe[self.exit_long_params['exit_long_indicator']]))
+        conditions_long.append(qtpylib.crossed_below(dataframe['trend_close_15m'], dataframe[self.exit_long_params['exit_long_indicator']]))
 
         # Exit short conditions
-        conditions_short.append(qtpylib.crossed_above(dataframe['trend_close_5m'], dataframe[self.exit_short_params['exit_short_indicator']]))
+        conditions_short.append(qtpylib.crossed_above(dataframe['trend_close_15m'], dataframe[self.exit_short_params['exit_short_indicator']]))
 
         if conditions_long:
             dataframe.loc[
@@ -306,10 +309,10 @@ class LSv1(IStrategy):
 
         return dataframe
 
-#     def confirm_trade_exit(self, pair: str, trade: 'Trade', order_type: str, amount: float, rate: float,
-  #                          time_in_force: str, custom_data: dict) -> bool:
-    #     self.last_positions[pair] = {
-      #       'type': 'short' if trade.is_short else 'long',
-        #     'profit': trade.calc_profit_ratio(rate)
-        # }
-        # return True  # Allow the trade exit
+    def confirm_trade_exit(self, pair: str, trade: 'Trade', order_type: str, amount: float, rate: float,
+                           time_in_force: str, custom_data: dict) -> bool:
+        self.last_positions[pair] = {
+            'type': 'short' if trade.is_short else 'long',
+            'profit': trade.calc_profit_ratio(rate)
+        }
+        return True  # Allow the trade exit
