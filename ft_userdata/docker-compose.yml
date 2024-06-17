@@ -19,7 +19,7 @@ services:
 
     # Default command used when running `docker compose up`
     command: >
-      jupyter lab --port=8888 --ip 0.0.0.0 --allow-root;
+      jupyter lab --port=8888 --ip 0.0.0.0 --allow-root &;
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
       --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
