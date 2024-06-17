@@ -56,7 +56,7 @@
     },
     "pairlists": [
         {
-            "method": "VolumePairList",
+            "method": "StaticPairList",
             "number_assets": 15,
             "sort_key": "quoteVolume",
             "min_value": 0,
