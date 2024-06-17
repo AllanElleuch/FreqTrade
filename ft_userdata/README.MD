@@ -16,5 +16,5 @@ https://www.freqtrade.io/en/stable/backtesting/
 Specify configuration file (default: `userdir/config.json` or `config.json` whichever exists). Multiple --config options may be used. Can be set to `-` to read config from stdin.
 
 
-freqtrade backtesting -s LSv1 --timeframe 15m  --user-data-dir /freqtrade/user_data/ --config
+freqtrade backtesting -s LSv1 --timeframe 15m  --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
  
