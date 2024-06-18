@@ -1,0 +1,17 @@
+---
+version: '3'
+services:
+  ft_jupyterlab:
+    build:
+      context: ./
+      dockerfile: user_data/docker/Dockerfile.jupyter
+    restart: unless-stopped
+    # container_name: freqtrade
+    ports:
+      - "0.0.0.0:8888:8888"
+    volumes:
+      - "./user_data:/freqtrade/user_data"
+    # Default command used when running `docker compose up`
+    command: >
+      jupyter lab --port=8888 --ip 0.0.0.0 --allow-root --NotebookApp.token=xorbloxlecreateur14215
+
