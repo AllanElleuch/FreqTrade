@@ -16,7 +16,6 @@ services:
     # for more information.
     ports:
       - "0.0.0.0:8080:8080"
-      - "0.0.0.0:8888:8888"
 
     # Default command used when running `docker compose up`
     command: >

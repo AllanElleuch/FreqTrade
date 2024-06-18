@@ -8,7 +8,6 @@ USER root
 
 RUN sudo apt-get update && apt-get install -y vim
 RUN echo 'root:myrootpassword' | chpasswd
-
 USER ftuser
 
 EXPOSE 8888
