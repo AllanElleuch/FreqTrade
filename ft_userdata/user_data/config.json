@@ -65,9 +65,8 @@
     ],
     "telegram": {
         "enabled": true,
-        "token": "7113248266:AAHhGevhx-tUssjNMe5sk8FS8FR6oyckeg0",
+        "token": "7433418865:AAGy0YTMXM0CTQTmi7BdD8gluh9wrj8lCtc",
         "chat_id": "-4240483218"
-
     },
     "api_server": {
         "enabled": true,
