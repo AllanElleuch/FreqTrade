@@ -1,9 +1,9 @@
 ---
 services:
   freqtrade:
-#    image: freqtradeorg/freqtrade:stable
+    image: freqtradeorg/freqtrade:stable
     # has to change from the official name otherwise it doesn't build
-    image: freqtradeorg-rebuild/freqtrade:develop
+    #image: freqtradeorg-rebuild/freqtrade:develop
     build:
       context: .
       dockerfile: "user_data/docker/Dockerfile.jupyter"
@@ -20,7 +20,6 @@ services:
 
     # Default command used when running `docker compose up`
     command: >
-#      jupyter lab --port=8888 --ip 0.0.0.0 --allow-root --NotebookApp.token=xorbloxlecreateur14215 &;
       trade
       --logfile /freqtrade/user_data/logs/freqtrade.log
       --db-url sqlite:////freqtrade/user_data/tradesv3.sqlite
