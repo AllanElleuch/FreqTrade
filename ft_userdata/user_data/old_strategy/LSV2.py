@@ -15,25 +15,23 @@ from freqtrade.strategy import DecimalParameter, IntParameter
 
 class LSv2copy(IStrategy):
 
-    INTERFACE_VERSION: int = 3
     can_short = True
 
     # Define hyperparameters for optimization
-    buy_trend_above_senkou_level = IntParameter(1, 8, default=1)
-    buy_trend_bullish_level = IntParameter(1, 8, default=6)
-    buy_fan_magnitude_shift_value = IntParameter(1, 3, default=2)
-    buy_min_fan_magnitude_gain = DecimalParameter(1.000, 1.500, default=1.002)
+    buy_trend_above_senkou_level = IntParameter(1, 8, default=1, space = "buy")
+    buy_trend_bullish_level = IntParameter(1, 8, default=6, space = "buy")
+    buy_fan_magnitude_shift_value = IntParameter(1, 3, default=2, space = "buy")
+    buy_min_fan_magnitude_gain = DecimalParameter(1.000, 1.500, default=1.002, space = "buy")
 
-    short_trend_below_senkou_level = IntParameter(1, 8, default=1)
-    short_trend_bearish_level = IntParameter(1, 8, default=6)
-    short_fan_magnitude_shift_value = IntParameter(1, 3, default=2)
-    short_min_fan_magnitude_gain = DecimalParameter(0.950, 1.000, default=0.998)
+    short_trend_below_senkou_level = IntParameter(1, 8, default=1, space = "buy")
+    short_trend_bearish_level = IntParameter(1, 8, default=6, space = "buy")
+    short_fan_magnitude_shift_value = IntParameter(1, 3, default=2, space = "buy")
+    short_min_fan_magnitude_gain = DecimalParameter(0.950, 1.000, default=0.998, space = "buy")
     
     # Exit Long hyperspace params:
     exit_long_params = {
         "exit_long_indicator": "trend_close_2h",
     }
-
 
     # Exit Short hyperspace params:
     exit_short_params = {
@@ -59,7 +57,7 @@ class LSv2copy(IStrategy):
     process_only_new_candles = False
 
     # Trailing stop:
-    trailing_stop = False
+    trailing_stop = True
     trailing_stop_positive = 0.05
     trailing_stop_positive_offset = 0.1
     trailing_only_offset_is_reached = False
@@ -297,3 +295,6 @@ class LSv2copy(IStrategy):
                 'exit_short'] = 1
 
         return dataframe
+
+
+# Have a working strategy at hand.
