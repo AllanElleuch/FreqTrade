@@ -15,6 +15,7 @@ freqtrade download-data --exchange bybit  --pairs ETH/USDT ETH/USDT XRP/USDT BTC
 
 freqtrade download-data --exchange bybit --pairs ETH/USDT:USDT ETH/USDT XRP/USDT:USDT BTC/USDT:USDT  --timerange 20210101-20220101  -t 5m 15m --user-data-dir /freqtrade/user_data/
 
+Whitelist PAIRS: Whitelist with 30 pairs: ['BTC/USDT:USDT', 'ETH/USDT:USDT', 'SOL/USDT:USDT', '1000PEPE/USDT:USDT', 'XRP/USDT:USDT', 'NOT/USDT:USDT', '1000BEER/USDT:USDT', 'DOGE/USDT:USDT', 'WIF/USDT:USDT', 'PEOPLE/USDT:USDT', 'ONDO/USDT:USDT', 'ORDI/USDT:USDT', 'FTM/USDT:USDT', 'TON/USDT:USDT', 'INJ/USDT:USDT', 'MEW/USDT:USDT', 'NEAR/USDT:USDT', 'LINK/USDT:USDT', 'ADA/USDT:USDT', 'MATIC/USDT:USDT', 'WLD/USDT:USDT', '1000BONK/USDT:USDT', 'ENA/USDT:USDT', 'GALA/USDT:USDT', 'LDO/USDT:USDT', 'AVAX/USDT:USDT', 'BNB/USDT:USDT', 'IO/USDT:USDT', 'SHIB1000/USDT:USDT', 'ARB/USDT:USDT']
 
 # Back testing
 https://www.freqtrade.io/en/stable/backtesting/
