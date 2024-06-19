@@ -1,0 +1,40 @@
+{
+  "strategy_name": "LSv3_Full",
+  "params": {
+    "max_open_trades": {
+      "max_open_trades": 10
+    },
+    "buy": {
+      "buy_long_fan_magnitude_shift_value": 1,
+      "buy_long_min_fan_magnitude_gain": 0.954,
+      "buy_long_trend_above_senkou_level": 2,
+      "buy_long_trend_bullish_level": 4,
+      "buy_short_fan_magnitude_shift_value": 1,
+      "buy_short_min_fan_magnitude_gain": 1.02,
+      "buy_short_trend_bearish_level": 2,
+      "buy_short_trend_below_senkou_level": 1
+    },
+    "sell": {
+      "exit_long_params": "trend_close_1h",
+      "exit_short_params": "trend_close_1h"
+    },
+    "protection": {},
+    "roi": {
+      "0": 0.243,
+      "70": 0.143,
+      "115": 0.053,
+      "242": 0
+    },
+    "stoploss": {
+      "stoploss": -0.103
+    },
+    "trailing": {
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.052,
+      "trailing_stop_positive_offset": 0.151,
+      "trailing_only_offset_is_reached": true
+    }
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2024-06-19 12:51:16.607299+00:00"
+}
