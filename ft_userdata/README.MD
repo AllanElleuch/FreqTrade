@@ -5,12 +5,12 @@ https://www.freqtrade.io/en/stable/data-download/
 freqtrade list-data --userdir ~/.freqtrade/user_data/
 
 ## Download all pair future
-freqtrade download-data --exchange bybit   --trading-mode futures --data-format-ohlcv json   --data-format-trades json --trading-mode futures   --timerange 20210101-20230101  -t 15m --user-data-dir /freqtrade/user_data/
-
+freqtrade download-data --exchange bybit   --trading-mode futures --data-format-ohlcv json   --data-format-trades json --trading-mode futures   --timerange 20210101-20230101  -t 1m 5m 15m --user-data-dir /freqtrade/user_data/
+  
 freqtrade download-data --exchange bybit   --trading-mode futures --data-format-ohlcv feather   --data-format-trades feather --trading-mode futures   --timerange 20210101-20230101  -t 15m --user-data-dir /freqtrade/user_data/
 
 
-freqtrade download-data --exchange bybit  --pairs ETH/USDT ETH/USDT XRP/USDT BTC/USDT --trading-mode futures --data-format-ohlcv json   --data-format-trades json --trading-mode futures   --timerange 20210101-20220101  -t 15m --user-data-dir /freqtrade/user_data/
+freqtrade download-data --exchange bybit  --pairs ETH/USDT ETH/USDT XRP/USDT BTC/USDT --trading-mode futures --data-format-ohlcv json   --data-format-trades json --trading-mode futures   --timerange 20210101-20220101  -t 1m 5m 15m --user-data-dir /freqtrade/user_data/
 
 
 freqtrade download-data --exchange bybit --pairs ETH/USDT:USDT ETH/USDT XRP/USDT:USDT BTC/USDT:USDT  --timerange 20210101-20220101  -t 5m 15m --user-data-dir /freqtrade/user_data/
@@ -23,5 +23,49 @@ https://www.freqtrade.io/en/stable/backtesting/
 Specify configuration file (default: `userdir/config.json` or `config.json` whichever exists). Multiple --config options may be used. Can be set to `-` to read config from stdin.
 
 
-freqtrade backtesting -s LSv1 SampleStrategy  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
- 
+For example, if the commission fee per order is 0.1% (i.e., 0.001 written as ratio), then you would run backtesting as the following:
+
+## Freqai
+
+CatBoost: https://catboost.ai/en/docs/
+LightGBM: https://lightgbm.readthedocs.io/en/v3.3.2/#
+XGBoost: https://xgboost.readthedocs.io/en/stable/#
+
+
+freqtrade trade --config config_examples/config_freqai.example.json --strategy FreqaiExampleStrategy --freqaimodel LightGBMRegressor --strategy-path freqtrade/templates
+
+freqtrade backtesting --strategy FreqaiExampleStrategy  --timeframe 15m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20220501-20230701
+
+
+
+## without time range
+freqtrade backtesting -s LSv1   --fee 0.001  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
+
+
+freqtrade backtesting -s LSv1 --timerange=20180131-20180301  --fee 0.001  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
+
+You  can also backtest against other strategy
+-s LSv1 SampleStrategy
+--strategy-list LSv1 SampleStrategy
+
+freqtrade backtesting --strategy-list LSv1 SampleStrategy --timerange=20210131-20220301  --fee 0.001  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
+
+
+
+To visualize daily and weekly breakdowns, you can use the following:
+freqtrade backtesting --strategy MyAwesomeStrategy --breakdown day week
+
+
+# Hyperopt  
+https://www.freqtrade.io/en/stable/hyperopt/
+
+
+freqtrade hyperopt --hyperopt-loss SharpeHyperOptLossDaily --spaces roi stoploss trailing --strategy LSv1 --config config.json -e 100  --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
+
+
+
+
+# FreqAI
+https://www.freqtrade.io/en/stable/freqai/
+
+
