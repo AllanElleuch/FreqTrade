@@ -12,7 +12,7 @@ import numpy as np
 from freqtrade.strategy import stoploss_from_open
 from freqtrade.strategy import DecimalParameter, IntParameter, CategoricalParameter
 
-ENABLE_FREQ_AI = True
+ENABLE_FREQ_AI = False
 
 class LSv3_Full(IStrategy):
 
