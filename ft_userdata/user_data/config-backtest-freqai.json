@@ -6,13 +6,11 @@
         "purge_old_models": 2,
         "train_period_days": 30,
         "backtest_period_days": 7,
-        "identifier" : "unique-id",
+        "identifier" : "LSV3",
         "feature_parameters" : {
             "include_timeframes": ["5m","15m","4h"],
             "include_corr_pairlist": [
-                "ETH/USD",
-                "LINK/USD",
-                "BNB/USD"
+                "BTC/USDT:USDT"
             ],
             "label_period_candles": 24,
             "include_shifted_candles": 2,
@@ -67,14 +65,7 @@
         "secret": "f5mZP72dBS7lTG8YHkq3AODwm5uGlNXu3iy5",
         "ccxt_config": {},
         "ccxt_async_config": {},
-        "pair_whitelist": [
-            "ETH/USDT:USDT",
-            "BTC/USDT:USDT",
-            "SOL/USDT:USDT",
-            "BNB/USDT:USDT",
-            "IO/USDT:USDT",
-            "NEAR/USDT:USDT"
-        ],
+        "pair_whitelist": ["BTC/USDT:USDT"],
         "pair_blacklist": [
         ]
     },

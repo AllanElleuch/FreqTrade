@@ -1,0 +1,8 @@
+tradesv3.sqlite-shm
+tradesv3.sqlite-wal
+tradesv3.sqlite-shm
+ft_userdata/user_data/data/bybit/futures
+
+/ft_userdata/user_data/backtest_results/**
+/ft_userdata/user_data/models/**
+/ft_userdata/user_data/logs/freqtrade.log

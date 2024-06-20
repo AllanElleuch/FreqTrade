@@ -5,7 +5,19 @@ https://www.freqtrade.io/en/stable/data-download/
 freqtrade list-data --userdir ~/.freqtrade/user_data/
 
 ## Download all pair future
-freqtrade download-data --exchange bybit   --trading-mode futures --data-format-ohlcv json   --data-format-trades json --trading-mode futures   --timerange 20210101-20230101  -t 1m 5m 15m --user-data-dir /freqtrade/user_data/
+
+freqtrade download-data --exchange bybit  --pairs BTC/USDT:USDT --timerange 20210101-20240620 -t 4h 1m 5m 15m   --user-data-dir /freqtrade/user_data/
+freqtrade download-data --exchange bybit --timerange 20210101-20240620 -t 4h 1m 5m 15m   --user-data-dir /freqtrade/user_data/
+rr
+
+
+freqtrade download-data --exchange bybit   --trading-mode futures --timerange 20210420-20240620   --user-data-dir /freqtrade/user_data/
+
+
+freqtrade download-data --exchange bybit   --trading-mode futures  --trading-mode futures   --timerange 20210101-20230101  -t  5m 15m --user-data-dir /freqtrade/user_data/
+
+freqtrade download-data --exchange bybit   --trading-mode futures  --trading-mode futures   --timerange 20210101-20230101  -t  4h 8h --user-data-dir /freqtrade/user_data/
+
   
 freqtrade download-data --exchange bybit   --trading-mode futures --data-format-ohlcv feather   --data-format-trades feather --trading-mode futures   --timerange 20210101-20230101  -t 15m --user-data-dir /freqtrade/user_data/
 
@@ -35,11 +47,30 @@ XGBoost: https://xgboost.readthedocs.io/en/stable/#
 
 freqtrade trade --config config_examples/config_freqai.example.json --strategy FreqaiExampleStrategy --freqaimodel LightGBMRegressor --strategy-path freqtrade/templates
 
-freqtrade backtesting --strategy FreqaiExampleStrategy  --timeframe 15m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20220501-20230701
+freqtrade backtesting --strategy  LSv3_Full  --timeframe 5m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20230620-20240625
+freqtrade backtesting --strategy-list  LSv3_Full  --timeframe 5m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20230620-20240625
+freqtrade backtesting --strategy-list FreqaiExampleStrategy LSv1 SampleStrategy LSv3 LSv3_Full  --timeframe 5m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20230620-20240625
+
+
+freqtrade backtesting --strategy FreqaiExampleStrategy  --timeframe 5m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20230620-20240625
+
+freqtrade backtesting --strategy FreqaiExampleStrategy  --timeframe 5m   --config user_data/config-backtest-freqai.json --freqaimodel LightGBMRegressor --timerange 20210101-20230101
+
+
+### Testing 
+
+Be aware of this error:
+2023-04-25 02:32:42,637 - freqtrade - ERROR - Trying to access pretrained model with `identifier` but found different features furnished by current strategy.Change `identifier` to train from scratch, or ensure thestrategy is furnishing the same features as the pretrainedmodel. In case of --strategy-list, please be aware that FreqAI requires all strategies to maintain identical feature_engineering_* functions
+
+If it happen delete the model folder or give another id of the model.
 
 
 
 ## without time range
+freqtrade backtesting --strategy-list LSv1 LSv3 --timerange=20210131-20240619  --fee 0.001  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
+
+
+
 freqtrade backtesting -s LSv1   --fee 0.001  --timeframe 15m  --dry-run-wallet 2000 --user-data-dir /freqtrade/user_data/ --config /freqtrade/user_data/config-backtest.json
 
 
