@@ -21,6 +21,8 @@ Before any task, read memory file `06-project-context.md` for current repo state
 Memory files are at: `/home/poop/.claude/projects/-mnt-nvme/memory/`
 Documentation is at: `/mnt/nvme/FreqTrade/repo/doc/freqtrade_official_documentation_extracted_for_claude/`
 
+**How to spawn a sub-agent:** Use the Agent tool with `subagent_type: "general-purpose"`. Read the agent's prompt file from `/mnt/nvme/FreqTrade/repo/agents/<name>.md` and include its contents as the prompt, appended with the specific user task. The agent file contains all context-loading instructions, rules, and output format.
+
 ### STRATEGY Agent
 **Triggers:** write strategy, modify strategy, debug strategy, add indicators, entry/exit logic, signals
 **Pre-read:** `06-project-context.md`, `01-strategy-development.md`
@@ -128,6 +130,13 @@ Documentation is at: `/mnt/nvme/FreqTrade/repo/doc/freqtrade_official_documentat
 │   ├── data/                                   # OHLCV data cache
 │   ├── logs/                                   # Bot logs
 │   └── models/                                 # FreqAI trained models
+/mnt/nvme/FreqTrade/repo/agents/
+│   ├── strategy.md                             # STRATEGY agent prompt
+│   ├── freqai.md                               # FREQAI agent prompt
+│   ├── backtest.md                             # BACKTEST agent prompt
+│   ├── hyperopt.md                             # HYPEROPT agent prompt
+│   ├── infra.md                                # INFRA agent prompt
+│   └── data.md                                 # DATA agent prompt
 /mnt/nvme/FreqTrade/repo/doc/freqtrade_official_documentation_extracted_for_claude/
 │   └── 00-index.md                             # Doc file listing
 /home/poop/.claude/projects/-mnt-nvme/memory/
